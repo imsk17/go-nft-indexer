@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"go-nft-listener/config"
 	"go-nft-listener/events"
 	"go-nft-listener/listeners"
@@ -38,7 +39,7 @@ func main() {
 		log.Panic("💥 Failed to get chain id: %s", err)
 	}
 
-	log.Infof("Connection to Chain Successful. Chain ID: %v", chainId)
+	log.Infof("✅ Connection to Chain Successful. Chain ID: %v", chainId)
 
 	logChan := make(chan types.Log)
 
@@ -56,7 +57,7 @@ func main() {
 
 	eventChan := make(chan events.Event)
 
-	listener := listeners.NewTransfer("Polygon", c.Rpc, eventChan, logChan)
+	listener := listeners.NewTransfer("Polygon", c.Rpc, eventChan, logChan, client)
 
 	go func() {
 		listener.Listen()
@@ -64,6 +65,6 @@ func main() {
 	}()
 
 	for {
-		<-eventChan
+		fmt.Println(<-eventChan)
 	}
 }
