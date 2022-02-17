@@ -1,0 +1,31 @@
+name: Release CI
+on:
+  push:
+    branches: [main]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source
+        uses: actions/checkout@v1
+      # Setup Go to Compile Binary
+      - name: Setup Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: "1.17"
+      - name: Generate Build
+        run: make build
+      # Upload generated artifacts.
+      - name: Upload artifacts
+        uses: marvinpinto/action-automatic-releases@latest
+        with:
+          prerelease: true
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "latest"
+          title: "Latest Release"
+          files: |
+            LICENSE
+            dist/*
