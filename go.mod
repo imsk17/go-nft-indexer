@@ -6,7 +6,10 @@ require github.com/ethereum/go-ethereum v1.10.15
 
 require (
 	github.com/google/uuid v1.1.5 // indirect
+	github.com/jinzhu/inflection v1.0.0 // indirect
+	github.com/jinzhu/now v1.1.4 // indirect
 	github.com/rjeczalik/notify v0.9.1 // indirect
+	gorm.io/gorm v1.22.5 // indirect
 )
 
 require (

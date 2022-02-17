@@ -1,69 +1,56 @@
 package db
 
 import (
-	"context"
+	"errors"
 	"go-nft-listener/domain"
+	"go-nft-listener/events"
 
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
+	"gorm.io/gorm"
 )
 
 type NftRepoReadService interface {
-	GetNftInfo(contract, tokenId string) (domain.EthNftID, error)
-	GetNftsByOwner(owner string) ([]domain.EthNftID, error)
+	GetNftInfo(contract, tokenId string) (domain.EthNft, error)
+	GetNftsByOwner(owner string, chainId string) ([]domain.EthNft, error)
 }
 
 type NftRepoWriteService interface {
-	CreateOrUpdateFull(info domain.EthNftID) error
-	CreateOrUpdateOwner(info domain.EthNftID) error
+	CreateOrUpdateFull(info events.Event) error
+	CreateOrUpdateOwner(info events.Event) error
 }
 
-type nftSvc struct {
-	db *mongo.Collection
+type NftRepoService interface {
+	NftRepoReadService
+	NftRepoWriteService
 }
 
-func NewNftRepo(db *mongo.Collection) NftRepoReadService {
+func NewNftRepo(db *gorm.DB) NftRepoService {
 	return &nftSvc{db: db}
 }
 
-func (s *nftSvc) GetNftInfo(contract, tokenId string) (domain.EthNftID, error) {
-	var info domain.EthNftID
-	if err := s.db.FindOne(context.Background(), bson.M{"contract": contract, "tokenId": tokenId}).Decode(&info); err != nil {
-		return domain.EthNftID{}, err
-	}
-	return info, nil
+type nftSvc struct {
+	db *gorm.DB
 }
 
-func (s *nftSvc) GetNftsByOwner(owner string) ([]domain.EthNftID, error) {
-	var info []domain.EthNftID
-	cursor, err := s.db.Find(context.Background(), bson.M{"owner": owner})
-	if err != nil {
-		return info, err
+func (n *nftSvc) GetNftInfo(contract, tokenId string) (domain.EthNft, error) {
+	var nft domain.EthNft
+	if err := n.db.First(&nft, "contract = ? AND tokenId = ?", contract, tokenId).Error; err != nil {
+		return nft, err
 	}
-	for cursor.Next(context.Background()) {
-		var i domain.EthNftID
-		if err := cursor.Decode(&i); err != nil {
-			return info, err
-		}
-		info = append(info, i)
-	}
-	return info, nil
+	return nft, nil
 }
 
-func (s *nftSvc) CreateOrUpdateOwner(info domain.EthNft) error {
-	if err := s.db.FindOne(context.Background(), bson.M{"contract": info.Contract, "tokenId": info.TokenId}).Err(); err == mongo.ErrNoDocuments {
-		_, err := s.db.InsertOne(context.Background(), info)
-		return err
+func (n *nftSvc) GetNftsByOwner(owner string, chainId string) ([]domain.EthNft, error) {
+	var nfts []domain.EthNft
+	if err := n.db.Find(&nfts, "owner = ? AND chainId = ?", owner, chainId).Error; err != nil {
+		return nfts, err
 	}
-	_, err := s.db.UpdateOne(context.Background(), bson.M{"contract": info.Contract, "tokenId": info.TokenId}, info)
-	return err
+	return nfts, nil
 }
 
-func (s *nftSvc) CreateOrUpdateFull(info domain.EthNft) error {
-	if err := s.db.FindOne(context.Background(), bson.M{"contract": info.Contract, "tokenId": info.TokenId}).Err(); err == mongo.ErrNoDocuments {
-		_, err := s.db.InsertOne(context.Background(), info)
-		return err
-	}
-	_, err := s.db.UpdateOne(context.Background(), bson.M{"contract": info.Contract, "tokenId": info.TokenId}, info)
-	return err
+func (n *nftSvc) CreateOrUpdateFull(info events.Event) error {
+	return errors.New("not implemented")
+}
+
+func (n *nftSvc) CreateOrUpdateOwner(info events.Event) error {
+	return errors.New("not implemented")
 }

@@ -1,8 +1,10 @@
 package domain
 
 import (
+	"errors"
+
 	log "github.com/sirupsen/logrus"
-	"time"
+	"gorm.io/gorm"
 )
 
 type Contract string
@@ -13,20 +15,19 @@ const (
 )
 
 type EthNft struct {
-	ChainId      string    `json:"chain_id"`
-	TokenId      string    `json:"token_id"`
-	Owner        string    `json:"owner"`
-	URI          string    `json:"uri"`
-	Name         string    `json:"name"`
-	Symbol       string    `json:"symbol"`
-	Contract     Contract  `json:"contract"`
-	CreatedAt    time.Time `json:"created_at"`
-	UpdatedAt    time.Time `json:"updated_at"`
-	ContractType string    `json:"contract_type"`
+	gorm.Model
+	ChainId      string   `json:"chain_id"`
+	TokenId      string   `json:"token_id"`
+	Owner        string   `json:"owner"`
+	URI          string   `json:"uri"`
+	Name         string   `json:"name"`
+	Symbol       string   `json:"symbol"`
+	Contract     string   `json:"contract"`
+	ContractType Contract `json:"contract_type"`
 }
 
-func NewEthNft(chainId, tokenId, owner, uri, name, symbol, contractType string, contract Contract) EthNft {
-	if !(contract == "ERC721" || contract == "ERC1155") {
+func NewEthNft(chainId, tokenId, owner, uri, name, symbol, contract string, contractType Contract) EthNft {
+	if !(contractType == ERC721 || contractType == ERC1155) {
 		log.Panic("contract must be ERC721 or ERC1155")
 	}
 	return EthNft{
@@ -38,7 +39,7 @@ func NewEthNft(chainId, tokenId, owner, uri, name, symbol, contractType string, 
 		Symbol:       symbol,
 		Contract:     contract,
 		ContractType: contractType,
-		CreatedAt:    time.Now(),
-		UpdatedAt:    time.Now(),
 	}
 }
+
+var ErrIncorrectContractType = errors.New(`Contract Type must be ERC721 or ERC1155`)
