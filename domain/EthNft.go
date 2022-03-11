@@ -3,7 +3,6 @@ package domain
 import (
 	"errors"
 
-	log "github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 )
 
@@ -26,9 +25,11 @@ type EthNft struct {
 	ContractType Contract `json:"contract_type"`
 }
 
-func NewEthNft(chainId, tokenId, owner, uri, name, symbol, contract string, contractType Contract) EthNft {
+var ErrIncorrectContractType = errors.New("incorrect contract type for nft. must be ERC721 or ERC1155")
+
+func NewEthNft(chainId, tokenId, owner, uri, name, symbol, contract string, contractType Contract) (EthNft, error) {
 	if !(contractType == ERC721 || contractType == ERC1155) {
-		log.Panic("contract must be ERC721 or ERC1155")
+		return EthNft{}, ErrIncorrectContractType
 	}
 	return EthNft{
 		ChainId:      chainId,
@@ -39,7 +40,5 @@ func NewEthNft(chainId, tokenId, owner, uri, name, symbol, contract string, cont
 		Symbol:       symbol,
 		Contract:     contract,
 		ContractType: contractType,
-	}
+	}, nil
 }
-
-var ErrIncorrectContractType = errors.New(`Contract Type must be ERC721 or ERC1155`)

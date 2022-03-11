@@ -1,11 +1,12 @@
 package listeners
 
 import (
+	"go-nft-listener/events"
+
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/metachris/eth-go-bindings/erc165"
 	log "github.com/sirupsen/logrus"
-	"go-nft-listener/events"
 )
 
 type transferListener struct {
