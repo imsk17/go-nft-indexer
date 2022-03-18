@@ -38,6 +38,7 @@ func parseLogLevel(level string) log.Level {
 	case "info":
 		return log.InfoLevel
 	}
+	log.Warnf("⚠️ Invalid log level: %s. Using Error as Logging Level.", level)
 	return log.ErrorLevel
 }
 
