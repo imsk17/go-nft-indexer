@@ -21,12 +21,12 @@ func (e TransferERC721) Topic() string {
 	return "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"
 }
 
-// String returns a human readable string representation of the event.
+// String returns a human-readable string representation of the event.
 func (e *TransferERC721) String() string {
 	return fmt.Sprintf("Transfer ERC721 :-\n%s -> %s, Token: %v\n", e.From.Hex(), e.To.Hex(), e.TokenId)
 }
 
-// This function can be used to decode a Transfer event from an event log.
+// DecodeTransferERC721 can be used to decode a Transfer event from an event log.
 func DecodeTransferERC721(log *types.Log) TransferERC721 {
 	var transfer TransferERC721
 	transfer.From = common.BytesToAddress(log.Topics[1].Bytes())

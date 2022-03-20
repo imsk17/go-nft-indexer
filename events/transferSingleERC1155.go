@@ -23,12 +23,12 @@ func (e TransferSingleERC1155) Topic() string {
 	return "0xc3d58168c5ae7397731d063d5bbf3d657854427343f4c083240f7aacaa2d0f62"
 }
 
-// String returns a human readable string representation of the event.
+// String returns a human-readable string representation of the event.
 func (e *TransferSingleERC1155) String() string {
 	return fmt.Sprintf("Transfer Single :- Operator : %s, Value: %v, ID: %v\n%s -> %s\n", e.Operator, e.Value.Int64(), e.Id.Int64(), e.From, e.To)
 }
 
-// This function can be used to decode a Transfer event from an event log.
+// DecodeTransferSingleERC1155 can be used to decode a Transfer event from an event log.
 func DecodeTransferSingleERC1155(log *types.Log) TransferSingleERC1155 {
 	var transferSingle TransferSingleERC1155
 	err := ERC1155ABI.UnpackIntoInterface(&transferSingle, "TransferSingle", log.Data)

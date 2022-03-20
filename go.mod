@@ -6,10 +6,20 @@ require github.com/ethereum/go-ethereum v1.10.15
 
 require (
 	github.com/google/uuid v1.1.5 // indirect
+	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
+	github.com/jackc/pgconn v1.10.1 // indirect
+	github.com/jackc/pgio v1.0.0 // indirect
+	github.com/jackc/pgpassfile v1.0.0 // indirect
+	github.com/jackc/pgproto3/v2 v2.2.0 // indirect
+	github.com/jackc/pgservicefile v0.0.0-20200714003250-2b9c44734f2b // indirect
+	github.com/jackc/pgtype v1.9.1 // indirect
+	github.com/jackc/pgx/v4 v4.14.1 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.4 // indirect
+	github.com/onrik/gorm-logrus v0.3.0 // indirect
 	github.com/rjeczalik/notify v0.9.1 // indirect
-	gorm.io/gorm v1.22.5 // indirect
+	gorm.io/driver/postgres v1.3.1 // indirect
+	gorm.io/gorm v1.23.1 // indirect
 )
 
 require (
@@ -49,6 +59,6 @@ require (
 	golang.org/x/crypto v0.0.0-20220131195533-30dcbda58838 // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
 	golang.org/x/sys v0.0.0-20220128215802-99c3d69c2c27 // indirect
-	golang.org/x/text v0.3.6 // indirect
+	golang.org/x/text v0.3.7 // indirect
 	gopkg.in/natefinch/npipe.v2 v2.0.0-20160621034901-c1b8fa8bdcce // indirect
 )

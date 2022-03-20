@@ -2,13 +2,16 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"go-nft-listener/config"
+	"go-nft-listener/domain"
 	"go-nft-listener/events"
 	"go-nft-listener/listeners"
 	"sync"
 
+	gorm_logrus "github.com/onrik/gorm-logrus"
 	log "github.com/sirupsen/logrus"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/common"
@@ -25,13 +28,40 @@ func main() {
 	log.Info("⚙️ Loading Environment Variables")
 	c := config.Load()
 
+	log.Info("✅ Environment Variables Loaded")
+
 	log.SetLevel(c.LogLevel)
 
+	// Create Connection to Database
+	log.Info("💾 Connecting to Database ...")
+	db, err := gorm.Open(postgres.Open(c.Db), &gorm.Config{
+		Logger: gorm_logrus.New(),
+	})
+	if err != nil {
+		log.Panicf("💥 Failed to connect to database: %s", err)
+	}
+	log.Info("✅ Connected to Database")
+
+	if c.LogLevel == log.DebugLevel {
+		log.Info("💾 Switching ORM To Debug Mode")
+		db.Debug()
+		log.Info("✅ Database Debug Mode On")
+	}
+
+	log.Info("💾 Trying to auto migrate the database ...")
+	err = db.AutoMigrate(&domain.EthNft{})
+
+	if err != nil {
+		log.Panicf("💥 Failed to auto migrate the database: %s", err)
+	}
+
 	log.Info("☎️ Connecting to Chain ...")
+
 	client, err := ethclient.Dial(c.Rpc)
 	if err != nil {
-		log.Panic(err)
+		log.Panic("💥 Failed to connect to chain: %s", err)
 	}
+	log.Info("✅ Connected to Chain")
 
 	chainId, err := client.ChainID(context.Background())
 
@@ -65,6 +95,6 @@ func main() {
 	}()
 
 	for {
-		fmt.Println(<-eventChan)
+		<-eventChan
 	}
 }

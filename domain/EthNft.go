@@ -2,8 +2,6 @@ package domain
 
 import (
 	"errors"
-
-	"gorm.io/gorm"
 )
 
 type Contract string
@@ -14,15 +12,16 @@ const (
 )
 
 type EthNft struct {
-	gorm.Model
-	ChainId      string   `json:"chain_id"`
+	ID           uint     `gorm:"primarykey"`
+	ChainId      string   `json:"chain_id" gorm:"index:idx_chain_id_owner"`
 	TokenId      string   `json:"token_id"`
-	Owner        string   `json:"owner"`
+	Owner        string   `json:"owner" gorm:"index:idx_chain_id_owner"`
 	URI          string   `json:"uri"`
 	Name         string   `json:"name"`
 	Symbol       string   `json:"symbol"`
 	Contract     string   `json:"contract"`
 	ContractType Contract `json:"contract_type"`
+	UpdatedAt    int64    `gorm:"autoUpdateTime:milli"`
 }
 
 var ErrIncorrectContractType = errors.New("incorrect contract type for nft. must be ERC721 or ERC1155")

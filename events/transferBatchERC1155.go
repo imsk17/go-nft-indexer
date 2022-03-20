@@ -29,12 +29,12 @@ func (e TransferBatchERC1155) Topic() string {
 	return "0xf5f16c58bf69e14e9fa06e742215b42aa896de1c15af339f09e3360557089f43"
 }
 
-// String returns a human readable string representation of the event.
+// String returns a human-readable string representation of the event.
 func (e *TransferBatchERC1155) String() string {
 	return fmt.Sprintf("Transfer ERC1155:\nOperator: %s\n%s -> %s\n Value: %v Ids: %v", e.Operator, e.From, e.To, e.Values, e.Ids)
 }
 
-// This function can be used to decode a TransferBatchERC1155 event from an event log.
+// DecodeTransferBatchERC1155 can be used to decode a TransferBatchERC1155 event from an event log.
 func DecodeTransferBatchERC1155(log *types.Log) TransferBatchERC1155 {
 	var transferBatch TransferBatchERC1155
 	err := ERC1155ABI.UnpackIntoInterface(&transferBatch, "TransferBatch", log.Data)
