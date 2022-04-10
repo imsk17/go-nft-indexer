@@ -2,6 +2,8 @@ package domain
 
 import (
 	"errors"
+
+	"github.com/ethereum/go-ethereum/common"
 )
 
 type Contract string
@@ -30,14 +32,16 @@ func NewEthNft(chainId, tokenId, owner, uri, name, symbol, contract string, cont
 	if !(contractType == ERC721 || contractType == ERC1155) {
 		return EthNft{}, ErrIncorrectContractType
 	}
+	ownerChecksum := common.HexToAddress(owner).String()
+	contractChecksum := common.HexToAddress(contract).String()
 	return EthNft{
 		ChainId:      chainId,
 		TokenId:      tokenId,
-		Owner:        owner,
+		Owner:        ownerChecksum,
 		URI:          uri,
 		Name:         name,
 		Symbol:       symbol,
-		Contract:     contract,
+		Contract:     contractChecksum,
 		ContractType: contractType,
 	}, nil
 }
